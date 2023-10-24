@@ -1,18 +1,26 @@
 const { Client, Pool } = require("pg");
-const pool = new Pool({
+/*const pool = new Pool({
   user: "joed",
   host: "dpg-cjrufkdm702s738asrgg-a.oregon-postgres.render.com",
   password: "Ov6GH4LYKiNCkYzDL1bsd6yxZsnRMnwf",
   port: "5432",
   database: "reactpg",
   ssl: true,
-});
-
-async function dbquery(pool, query) {
+});*/
+const DATABASE_URL =
+  "ppostgres://Joesiphers:j7ZgVUoK4tPn@ep-frosty-haze-09169370.ap-southeast-1.aws.neon.tech/neondb?options=endpoint%3Dep-frosty-haze-09169370";
+async function dbquery(query, values = []) {
+  const pool = new Pool({
+    connectionString: DATABASE_URL,
+    ssl: {
+      require: true,
+    },
+  });
   try {
     const client = await pool.connect();
+    console.log("quering : ", query);
+    const result = await client.query(query, values);
 
-    const result = await client.query(query);
     client.release();
     return result;
   } catch (error) {
@@ -22,7 +30,7 @@ async function dbquery(pool, query) {
 
 module.exports.dbquery = dbquery;
 
-async function insertRecord(req, res) {
+/*async function insertRecord(req, res) {
   const client = await pool.connect();
 
   const data = req.query;
@@ -56,3 +64,4 @@ async function insertRecord(req, res) {
   }
 }
 module.exports.insertQuery = insertRecord;
+*/

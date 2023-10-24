@@ -2,7 +2,7 @@ const express = require("express");
 
 const app = express();
 const port = 5002;
-const { Client, Pool } = require("pg");
+//const { Client, Pool } = require("pg");
 const { dbquery } = require("./routes/dbquery");
 
 const postgres = require("postgres");
@@ -20,12 +20,12 @@ const sql = postgres(dbconfig);
 //const pool = new Pool(dbconfig);
 const DATABASE_URL =
   "ppostgres://Joesiphers:j7ZgVUoK4tPn@ep-frosty-haze-09169370.ap-southeast-1.aws.neon.tech/neondb?options=endpoint%3Dep-frosty-haze-09169370";
-const pool = new Pool({
+/*const pool = new Pool({
   connectionString: DATABASE_URL,
   ssl: {
     require: true,
   },
-});
+});*/
 async function getPgVersion() {
   const result = await sql`select version()`;
   console.log(result);
@@ -42,25 +42,6 @@ async function getPgVersion() {
 */
 //const client = pool.connect();
 //create table. ct
-app.get("/ct", async (req, res) => {
-  try {
-    //const client = await pool.connect();
-    const client = await pool.connect();
-    const query = `
-      CREATE TABLE IF NOT EXISTS title (
-        id SERIAL PRIMARY KEY,
-        title varchar
-       )
-    `;
-    await client.query(query);
-    // await sql(query);
-    client.release();
-    res.json({ message: "Table created successfully!" });
-  } catch (error) {
-    console.error("Error creating table:", error);
-    res.status(500).json({ error: error });
-  }
-});
 
 // Call the insertRecord function to insert a record
 app.get("/it", async (req, res) => {
@@ -111,32 +92,10 @@ app.get("/", (req, res) => {
 });
 
 //app.use("/users", usersRouter);
-async function dbq(pool, query) {
-  try {
-    const client = await pool.connect();
-    const result = await client.query(query);
-    client.release();
-    return result;
-  } catch (error) {
-    return error;
-  }
-}
-app.get("/ic", async (req, res) => {
-  const query = `
-  ALTER TABLE title
-  ADD COLUMN username varchar(12) ;
-`;
-  const result = await dbq(pool, query);
-  res.status(200).json({ result: result });
-});
 
-app.get("/all", async (req, res) => {
-  const query = `
-  TABLE title
-`;
-  const result = await dbquery(pool, query);
-  res.status(200).json({ result: result });
-});
+const tableRouter = require("./routes/table");
+
+//import tableRouter from "./routes/table";
 
 app.get("/selectall", async (req, res) => {
   const query = `
@@ -154,7 +113,11 @@ app.get("/idtitle", async (req, res) => {
   const result = await dbquery(pool, query);
   res.status(200).json({ result: result.rows });
 });
-
+app.use( (req, res, next) => {
+  console.log(req.path, req.query, "app use");
+  next();
+});
+app.use("/table", tableRouter);
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
