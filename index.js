@@ -30,6 +30,13 @@ async function getPgVersion() {
   const result = await sql`select version()`;
   console.log(result);
 }
+async function selectsql(req, res) {
+  const query = `SELECT * FROM pipe_know `; //WHERE address ='xxx' `
+  const result = await sql`SELECT * FROM pipe_know `;
+  console.log(result);
+  res.status(500).json({ result: result });
+}
+app.get("/select", selectsql);
 //getPgVersion();
 /*const pool = new Pool({
   user: "joed",
@@ -113,7 +120,7 @@ app.get("/idtitle", async (req, res) => {
   const result = await dbquery(pool, query);
   res.status(200).json({ result: result.rows });
 });
-app.use( (req, res, next) => {
+app.use((req, res, next) => {
   console.log(req.path, req.query, "app use");
   next();
 });

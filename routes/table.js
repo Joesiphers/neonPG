@@ -97,17 +97,19 @@ app.get("/ic", async (req, res) => {
   res.status(200).json({ result: result });
 });
 */
+
+//*****insert record *******/
 const insertRecord = async (req, res) => {
-  const field = Object.keys(req.query);
+  const fields = Object.keys(req.query);
   const values = Object.values(req.query);
-  console.log("insertRecord", req.query, field, values);
+  console.log("insertRecord", req.query, fields, values[0]);
   const query = `
-  INSERT INTO pipe_know (${field})
-  VALUES ($1) 
+  INSERT INTO pipe_know (${fields})
+  VALUES ($1,$2) 
   RETURNING *;`;
   console.log("query", query);
-  //const result = await dbquery(query, values);
-  res.status(200).json({ result: " result" });
+  const result = await dbquery(query, values);
+  res.status(200).json({ result: result });
 };
 
 tableRouter.get("/insert_record", insertRecord);
@@ -133,3 +135,32 @@ tableRouter.get("/insert_record", insertRecord);
   const result = await dbquery(query);
   res.status(200).json({ result: result });
 }; */
+
+/**
+ * const query = {
+  text: 'SELECT * FROM your_table WHERE id = $1',//DELETE FROM tablename WHERE xxx=$1
+  values: [recordIdToSelect],
+};
+ */
+const select = async (req, res) => {
+  console.log("select ", req.query);
+
+  const fields = Object.keys(req.query);
+  const values = Object.values(req.query);
+  let condition;
+  for (i in fields) {
+    if (i == "0") {
+      condition = fields[i] + "= $" + (+i + 1);
+    } else {
+      condition += " AND " + fields[i] + "= $" + (+i + 1);
+    }
+    console.log(i, fields[i], condition);
+  }
+  const query =
+    `
+    SELECT * FROM pipe_know WHERE ` + condition;
+  const result = await dbquery(query, values);
+  res.status(200).json({ result: result.rows });
+};
+
+tableRouter.get("/select", select);

@@ -18,7 +18,7 @@ async function dbquery(query, values = []) {
   });
   try {
     const client = await pool.connect();
-    console.log("quering : ", query);
+    console.log("quering : ", query, values);
     const result = await client.query(query, values);
 
     client.release();
