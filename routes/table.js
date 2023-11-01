@@ -1,5 +1,5 @@
 const express = require("express");
-const { required } = require("nodemon/lib/config");
+const bodyParser = require("body-parser");
 const { dbquery } = require("./dbquery");
 const tableRouter = express.Router();
 module.exports = tableRouter;
@@ -165,24 +165,23 @@ const select = async (req, res) => {
 };
 
 tableRouter.get("/select", select);
-const bodyParser = require("body-parser");
 
 const add_record = async (req, res) => {
   const fields = Object.keys(req.query);
   const values = Object.values(req.query);
-  console.log("add Record", req.query, fields, values[0], req.body);
+  console.log("add Record", req.query, fields, values, req.body);
   const query = `
   INSERT INTO pipe_know (${fields})
   VALUES ($1,$2) 
   RETURNING *;`;
   console.log("query", query);
   //const result = await dbquery(query, values);
-  const result = { query: req.query, body: req.body };
+  const result = { query: req.query, method: req.method, body: req.body };
   res.status(200).json(result);
 };
 // create application/json parser
 var jsonParser = bodyParser.json();
-
 // create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
-tableRouter.post("/add_record", jsonParser, add_record);
+var urlencodedParser = bodyParser.urlencoded({ extended: true });
+tableRouter.use("/add_record", urlencodedParser, add_record);
+//tableRouter.use("/add_record", jsonParser, add_record);
