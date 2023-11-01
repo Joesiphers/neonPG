@@ -167,17 +167,32 @@ const select = async (req, res) => {
 tableRouter.get("/select", select);
 
 const add_record = async (req, res) => {
-  const fields = Object.keys(req.query);
+  /*const fields = Object.keys(req.query);
   const values = Object.values(req.query);
-  console.log("add Record", req.query, fields, values, req.body);
+  */
+  const fields = Object.keys(req.body);
+  const values = Object.values(req.body);
+  console.log("add Record", req.query, fields.length, values, req.body);
+  let valueNumber = "";
+  /*  for (let i = 1; i <= fields.length; i++) {
+    valueNumber += `$${i},`;
+    console.log("n", valueNumber);
+  }*/
+  for (i in fields) {
+    if (i !== "0") {
+      valueNumber += ", $" + (+i + 1);
+    } else {
+      valueNumber += "$" + (+i + 1);
+    }
+  }
   const query = `
   INSERT INTO pipe_know (${fields})
-  VALUES ($1,$2) 
+  VALUES (${valueNumber}) 
   RETURNING *;`;
   console.log("query", query);
-  //const result = await dbquery(query, values);
-  const result = { query: req.query, method: req.method, body: req.body };
-  res.status(200).json(result);
+  const result = await dbquery(query, values);
+  //const result = { query: req.query, method: req.method, body: req.body };
+  res.status(200).json(result.rows);
 };
 // create application/json parser
 var jsonParser = bodyParser.json();
