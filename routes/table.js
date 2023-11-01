@@ -165,10 +165,9 @@ const select = async (req, res) => {
 };
 
 tableRouter.get("/select", select);
-const bodyParser=require('body-parser')
+const bodyParser = require("body-parser");
 
 const add_record = async (req, res) => {
-
   const fields = Object.keys(req.query);
   const values = Object.values(req.query);
   console.log("add Record", req.query, fields, values[0], req.body);
@@ -178,12 +177,12 @@ const add_record = async (req, res) => {
   RETURNING *;`;
   console.log("query", query);
   //const result = await dbquery(query, values);
-  const result = req.query, req.body
-  res.status(200).json({ result });
+  const result = { query: req.query, body: req.body };
+  res.status(200).json(result);
 };
 // create application/json parser
-var jsonParser = bodyParser.json()
+var jsonParser = bodyParser.json();
 
 // create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
-tableRouter.post("/add_record",jsonParser, add_record);
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+tableRouter.post("/add_record", jsonParser, add_record);
