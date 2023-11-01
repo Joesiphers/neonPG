@@ -1,10 +1,8 @@
 const express = require("express");
-
 const app = express();
 const port = 5002;
 //const { Client, Pool } = require("pg");
 const { dbquery } = require("./routes/dbquery");
-
 const postgres = require("postgres");
 //require("dotenv").config();
 const dbconfig = {
