@@ -190,10 +190,10 @@ const add_record = async (req, res) => {
   VALUES (${valueNumber}) 
   RETURNING *;`;
 
-  //const result = await dbquery(query, values);
+  const result = await dbquery(query, values);
   const resultrows = { query: req, method: req.method, body: req.body };
   console.log("query", resultrows);
-  res.status(200).json(req.body);
+  res.status(200).json(result);
 };
 // create application/json parser
 var jsonParser = bodyParser.json();

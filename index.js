@@ -1,8 +1,11 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-
-app.use(cors());
+var corsOptions = {
+  origin: /.*.csb.app/,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.use(cors(corsOptions));
 const port = 5002;
 //const { Client, Pool } = require("pg");
 const { dbquery } = require("./routes/dbquery");
