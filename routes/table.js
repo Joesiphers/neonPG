@@ -189,14 +189,15 @@ const add_record = async (req, res) => {
   INSERT INTO pipe_know (${fields})
   VALUES (${valueNumber}) 
   RETURNING *;`;
-  console.log("query", query);
-  const result = await dbquery(query, values);
-  //const result = { query: req.query, method: req.method, body: req.body };
-  res.status(200).json(result.rows);
+
+  //const result = await dbquery(query, values);
+  const resultrows = { query: req, method: req.method, body: req.body };
+  console.log("query", resultrows);
+  res.status(200).json(req.body);
 };
 // create application/json parser
 var jsonParser = bodyParser.json();
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
-tableRouter.use("/add_record", urlencodedParser, add_record);
-//tableRouter.use("/add_record", jsonParser, add_record);
+//tableRouter.use("/add_record", urlencodedParser, add_record);
+tableRouter.use("/add_record", jsonParser, add_record);
